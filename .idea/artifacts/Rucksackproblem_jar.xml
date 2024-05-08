@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Rucksackproblem:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Rucksackproblem_jar</output-path>
+    <root id="archive" name="Rucksackproblem.jar">
+      <element id="module-output" name="AlgorithmsAndDatastructures" />
+    </root>
+  </artifact>
+</component>
