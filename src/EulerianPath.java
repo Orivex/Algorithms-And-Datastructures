@@ -8,6 +8,7 @@ public class EulerianPath {
 
         int[][] adjMatrix = new int[V][V];
 
+        connect(adjMatrix, 0, 0);
         connect(adjMatrix, 1, 2);
         connect(adjMatrix, 1, 3);
         connect(adjMatrix, 2, 2);
@@ -23,8 +24,8 @@ public class EulerianPath {
 
         int[] inDegrees = new int[V];
         int[] outDegrees = new int[V];
-        boolean atMostForOneVertex_1 = false; // Look in your notes
-        boolean atMostForOneVertex_2 = false; // Look in your notes
+        int startV = 0;
+        int endV = 0;
 
         for (int i = 0; i < V; i++) {
             int outConnections = 0;
@@ -36,47 +37,99 @@ public class EulerianPath {
             outDegrees[i] = outConnections;
             inDegrees[i] = inConnections;
 
-            int difference1 = outDegrees[i] - inDegrees[i];
-
-            if(difference1 == 1 && !atMostForOneVertex_1)
-                atMostForOneVertex_1 = true;
-            else if(difference1 == 1)
+            if(outConnections-inConnections > 1 || inConnections-outConnections > 1) {
                 System.exit(0);
-
-            int difference2 = inDegrees[i] - outDegrees[i];
-
-            if(difference2 == 1 && !atMostForOneVertex_2)
-                atMostForOneVertex_2 = true;
-            else if(difference2 == 1)
-                System.exit(0);
-
-        }
-
-        System.out.println("Eulerian path exists (～￣▽￣)～");
-
-
-    }
-
-    //static int[] solution = new int[V];
-    static void dfs(int[][] adjMatrix, int[] outDegrees, int[][] visited, int currentV) {
-        if(outDegrees[currentV] == 0) {
-            //Backtrack
-        }
-
-        for (int i = 0; i < adjMatrix[currentV].length; i++) {
-            if(adjMatrix[currentV][i] >= 1 && visited[currentV][i] == 0) {
-                visited[currentV][i] = 1;
-                dfs(adjMatrix, outDegrees, visited, i);
-                return;
+            }
+            else if(outConnections-inConnections == 1) {
+                startV++;
+            } else if (inConnections-outConnections == 1) {
+                endV++;
             }
         }
 
+        if(startV == 0 && endV == 0 || startV == 1 && endV == 1) {
+            System.out.println("Eulerian path exists (～￣▽￣)～");
+        }
+        else {
+            System.exit(0);
+        }
+
+        System.out.println("First: "+findStartVertex(outDegrees, inDegrees));
+
+        int[][] visited = new int[V][V];
+        dfs(adjMatrix, outDegrees, visited, findStartVertex(outDegrees, inDegrees));
+
+        if(getEdgesCount(adjMatrix) == path.size()-1) {
+            System.out.println("Path:");
+            for(int i : path) {
+                System.out.print(i + " ");
+            }
+        }
+        else {
+            System.out.println("Disconnected graph!");
+        }
     }
 
-    //Implement tomorrow
-    //int findStartVertex() {
-    //
-    //}
+    static List<Integer> path = new ArrayList<>();
+
+    static void dfs(int[][] adjMatrix, int[] outDegrees, int[][] visited, int currentV) {
+
+        while (outDegrees[currentV] != 0) {
+
+            int next = getNextNeighbor(adjMatrix, visited, currentV);
+
+            if(next == -1) {
+                return;
+            }
+
+            visited[currentV][next]++;
+            outDegrees[currentV]--;
+
+            dfs(adjMatrix, outDegrees, visited, next);
+        }
+
+        path.add(0, currentV);
+
+    }
+
+    static int getNextNeighbor(int[][] adjMatrix, int[][] visited, int currentV) {
+        for (int i = 0; i < adjMatrix.length; i++) {
+            if(adjMatrix[currentV][i] > 0 && visited[currentV][i] < adjMatrix[currentV][i]) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    static int findStartVertex(int[] out, int[] in) {
+        int start = 0;
+
+        for (int i = 0; i < out.length; i++) { //out.length = in.length = V
+            if(out[i] - in[i] == 1) {
+                return i;
+            }
+
+            if(out[i] > 0) { //Prevents using single vertices (Vertex with no edges at all) to be used as the startV
+                start = i;
+            }
+        }
+
+        return start;
+    }
+
+    static int getEdgesCount(int[][] adjMatrix) {
+        int edges = 0;
+
+        for (int i = 0; i < adjMatrix.length; i++) {
+            for (int j = 0; j < adjMatrix[i].length; j++) {
+                if(adjMatrix[i][j] > 0)
+                    edges++;
+            }
+        }
+
+        return edges;
+    }
 
     static void connect(int[][] adjMatrix, int v1, int v2) {
         adjMatrix[v1][v2] += 1;
