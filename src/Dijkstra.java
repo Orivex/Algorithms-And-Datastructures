@@ -1,109 +1,35 @@
-import java.awt.*;
-import java.util.*;
-import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Scanner;
 
 public class Dijkstra {
 
     public static void main(String[] args) {
-        Vertex A = new Vertex("A");
-        Vertex B = new Vertex("B");
-        Vertex C = new Vertex("C");
-        Vertex D = new Vertex("D");
-        Vertex S = new Vertex("S");
 
+        Scanner in = new Scanner(System.in);
 
-        addConnection(A, B, 20);
-        addConnection(B, C, 10);
-        addConnection(C, A, 50);
-        addConnection(A, D, 15 );
-        addConnection(S, A, 20);
-        addConnection(S, D, 10);
-        addConnection(C, D, 50);
+        int n = in.nextInt();
+        int[][] graph = new int[n+1][n+1];
 
-        shortest_path(A, S);
+        int m = in.nextInt();
+        for (int i = 0; i < m; i++) {
+            int a, b;
+            a = in.nextInt();
+            b = in.nextInt();
 
-    }
-
-    static void addConnection(Vertex vertex1, Vertex vertex2, int weight) {
-        vertex1.neighbors.add(new Edge(vertex2, weight));
-        vertex2.neighbors.add(new Edge(vertex1, weight));
-
-        vertex1.previousV = vertex2;
-        vertex2.previousV = vertex1;
-    }
-
-    static void shortest_path(Vertex startV, Vertex endV) {
-        startV.distance = 0;
-        startV.previousV = null;
-        HashSet<Vertex> visits = new HashSet<>();
-        PriorityQueue<Vertex> pq = new PriorityQueue();
-
-        visits.add(startV);
-        for(Edge edge : startV.neighbors) {
-            edge.connectedV.distance = edge.weight;
-            edge.connectedV.previousV = startV;
-            pq.add(edge.connectedV);
+            graph[a][b] = 1;
+            graph[b][a] = 1;
         }
 
-        while (!pq.isEmpty()) {
-            Vertex currentV = pq.poll();
-
-            visits.add(currentV);
-
-            for (Edge edge : currentV.neighbors) {
-                //System.out.println(edge.connectedV.previousV.name + currentV.name);
-                if(visits.contains(edge.connectedV)) {
-                    continue;
-                }
-
-                if((edge.weight + currentV.distance) < edge.connectedV.distance) {
-                    edge.connectedV.distance = edge.weight + currentV.distance;
-                    edge.connectedV.previousV = currentV;
-                }
-
-                pq.add(edge.connectedV);
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= n; j++) {
+                System.out.print(graph[i][j] + " ");
             }
+            System.out.println(" ");
         }
-
-        Vertex currentV = endV;
-        System.out.print(endV.name);
-
-        while(currentV.previousV != null) {
-           System.out.print( "<-" + currentV.previousV.name );
-           currentV = currentV.previousV;
-        }
-
-        System.out.println(" " + endV.distance);
 
     }
 
-    static class Vertex implements  Comparable<Vertex> {
+    static void dijkstra(int startV, int[][] graph) {
 
-        String name;
-        List<Edge> neighbors = new ArrayList<>();
-        int distance;
-
-        Vertex previousV;
-
-        public Vertex(String name) {
-            this.name = name;
-            this.distance = Integer.MAX_VALUE;
-        }
-
-        @Override
-        public int compareTo(Vertex o) {
-            return o.distance;
-        }
-    }
-
-    static class Edge {
-        int weight;
-        Vertex connectedV;
-
-        public Edge(Vertex connectedV, int weight) {
-            this.connectedV = connectedV;
-            this.weight = weight;
-        }
     }
 }
