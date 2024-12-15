@@ -4,28 +4,13 @@ import java.util.PriorityQueue;
 public class Dijkstra {
 
     public static void main(String[] args) {
-        List<Knoten> knoten = new ArrayList<>();
-
         Knoten knotenA = new Knoten("A");
-        knoten.add(knotenA);
-
         Knoten knotenB = new Knoten("B");
-        knoten.add(knotenB);
-
         Knoten knotenC = new Knoten("C");
-        knoten.add(knotenC);
-
         Knoten knotenD = new Knoten("D");
-        knoten.add(knotenD);
-
         Knoten knotenE = new Knoten("E");
-        knoten.add(knotenE);
-
         Knoten knotenF = new Knoten("F");
-        knoten.add(knotenF);
-
         Knoten knotenG = new Knoten("G");
-        knoten.add(knotenG);
 
         knotenA.verbindeZu(knotenB, 20);
         knotenA.verbindeZu(knotenC, 30);
@@ -56,10 +41,11 @@ public class Dijkstra {
         while (!pq.isEmpty()) {
             Knoten aktuellerKnoten = pq.poll();
 
-            if(besuchteKnoten.contains(aktuellerKnoten))
-                continue;
-
             for(Kante kante : aktuellerKnoten.kanten) { //Iteriere durch alle Nachbarn
+
+                if(besuchteKnoten.contains(kante.verbundenerKnoten))
+                    continue;
+
                 if( (aktuellerKnoten.kosten + kante.gewicht) < kante.verbundenerKnoten.kosten ) {
                     kante.verbundenerKnoten.kosten = aktuellerKnoten.kosten + kante.gewicht;
                     kante.verbundenerKnoten.vorgaenger = aktuellerKnoten;
@@ -84,7 +70,6 @@ public class Dijkstra {
             weg.append(start.wert);
             System.out.println("Kürzester Weg: " + weg.reverse() + " mit den insgesamten Kosten von " + ziel.kosten);
         }
-
 
     }
 
